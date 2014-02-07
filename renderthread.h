@@ -62,7 +62,7 @@ public:
     void render(double centerX, double centerY, double scaleFactor,
                 QSize resultSize);
 
-signals:
+Q_SIGNALS:
     void renderedImage(const QImage &image, double scaleFactor);
 
 protected:

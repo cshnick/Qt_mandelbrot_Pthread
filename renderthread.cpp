@@ -91,7 +91,7 @@ void RenderThread::render(double centerX, double centerY, double scaleFactor,
 //! [3]
 void RenderThread::run()
 {
-    forever {
+    for(;;) {
         mutex.lock();
         QSize resultSize = this->resultSize;
         double scaleFactor = this->scaleFactor;
@@ -156,7 +156,8 @@ void RenderThread::run()
                 pass = 4;
             } else {
                 if (!restart)
-                    emit renderedImage(image, scaleFactor);
+                    Q_EMIT(renderedImage(image, scaleFactor));
+
 //! [5] //! [6]
                 ++pass;
             }

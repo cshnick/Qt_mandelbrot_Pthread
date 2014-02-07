@@ -42,19 +42,46 @@
 #include <QtGui>
 
 #include "mandelbrotwidget.h"
-#include "pthread.h"
+#include "computingthread.h"
+#include "sigslot.h"
 
-//! [0]
+#include <iostream>
+
+using namespace sigslot;
+
+//template <typename T>
+//class templ {
+//public:
+//    templ(T var) {i = var;}
+//    void print() {qDebug() << i;}
+
+//private:
+//    T i;
+//};
+
+//class tst : public sigslot::has_slots<> {
+//public:
+//    tst(): i(0) {}
+//    void inc() {i++; qDebug() << "next i" << i;}
+//    void startThreads()
+//    {
+//        const int c =  5;
+//        MyThread* ths[c];
+//        for (int i = 0; i < c; i ++) {
+//            ths[i] = new MyThread;
+//            ths[i]->Start();
+//        }
+//    }
+//private:
+//    int i;
+//};
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    MandelbrotWidget widget;
 
-#if defined(Q_WS_S60)
-    widget.showMaximized();
-#else
+    MandelbrotWidget widget;
     widget.show();
-#endif
+
     return app.exec();
 }
-//! [0]

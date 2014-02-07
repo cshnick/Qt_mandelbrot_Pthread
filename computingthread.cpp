@@ -1,9 +1,10 @@
 #include "computingthread.h"
 
-//#include <QtGui>
+#include <QtGui>
 
 #include <math.h>
 #include <QImage>
+
 
 ComputingThread::ComputingThread()
     : started(false)
@@ -50,6 +51,8 @@ void ComputingThread::Execute()
     started = true;
     mutex.unlock();
     FOREVER {
+        qDebug() << "recalculating";
+
         mutex.lock();
         QSize resultSize = this->resultSize;
         double scaleFactor = this->scaleFactor;

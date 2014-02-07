@@ -44,8 +44,6 @@
 
 #include "mandelbrotwidget.h"
 
-
-//! [0]
 const double DefaultCenterX = -0.637011f;
 const double DefaultCenterY = -0.0395159f;
 const double DefaultScale = 0.00403897f;
@@ -53,9 +51,7 @@ const double DefaultScale = 0.00403897f;
 const double ZoomInFactor = 0.8f;
 const double ZoomOutFactor = 1 / ZoomInFactor;
 const int ScrollStep = 20;
-//! [0]
 
-//! [1]
 MandelbrotWidget::MandelbrotWidget(QWidget *parent)
     : QWidget(parent)
 {
@@ -65,8 +61,11 @@ MandelbrotWidget::MandelbrotWidget(QWidget *parent)
     curScale = DefaultScale;
 
     qRegisterMetaType<QImage>("QImage");
+
     connect(&thread, SIGNAL(renderedImage(QImage,double)),
             this, SLOT(updatePixmap(QImage,double)));
+
+    //__pthread.img.connect(this, &MandelbrotWidget::updatePixmap);
 
     setWindowTitle(tr("Mandelbrot"));
 #ifndef QT_NO_CURSOR
@@ -75,9 +74,12 @@ MandelbrotWidget::MandelbrotWidget(QWidget *parent)
     resize(550, 400);
 
 }
-//! [1]
 
-//! [2]
+MandelbrotWidget::~MandelbrotWidget()
+{
+    qDebug() << "destructor";
+}
+
 void MandelbrotWidget::paintEvent(QPaintEvent * /* event */)
 {
     QPainter painter(this);
@@ -87,19 +89,13 @@ void MandelbrotWidget::paintEvent(QPaintEvent * /* event */)
         painter.setPen(Qt::white);
         painter.drawText(rect(), Qt::AlignCenter,
                          tr("Rendering initial image, please wait..."));
-//! [2] //! [3]
         return;
-//! [3] //! [4]
     }
-//! [4]
 
-//! [5]
+
     if (curScale == pixmapScale) {
-//! [5] //! [6]
         painter.drawPixmap(pixmapOffset, pixmap);
-//! [6] //! [7]
     } else {
-//! [7] //! [8]
         double scaleFactor = pixmapScale / curScale;
         int newWidth = int(pixmap.width() * scaleFactor);
         int newHeight = int(pixmap.height() * scaleFactor);
@@ -113,9 +109,7 @@ void MandelbrotWidget::paintEvent(QPaintEvent * /* event */)
         painter.drawPixmap(exposed, pixmap, exposed);
         painter.restore();
     }
-//! [8] //! [9]
 
-#if !defined(Q_WS_S60) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_SIMULATOR)
     QString text = tr("Use mouse wheel or the '+' and '-' keys to zoom. "
                       "Press and hold left mouse button to scroll.");
     QFontMetrics metrics = painter.fontMetrics();
@@ -128,18 +122,16 @@ void MandelbrotWidget::paintEvent(QPaintEvent * /* event */)
     painter.setPen(Qt::white);
     painter.drawText((width() - textWidth) / 2,
                      metrics.leading() + metrics.ascent(), text);
-#endif
 }
-//! [9]
 
-//! [10]
+
 void MandelbrotWidget::resizeEvent(QResizeEvent * /* event */)
 {
     thread.render(centerX, centerY, curScale, size());
+    __pthread.render(centerX, centerY, curScale, size());
 }
-//! [10]
 
-//! [11]
+
 void MandelbrotWidget::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
@@ -165,26 +157,21 @@ void MandelbrotWidget::keyPressEvent(QKeyEvent *event)
         QWidget::keyPressEvent(event);
     }
 }
-//! [11]
 
-//! [12]
+
 void MandelbrotWidget::wheelEvent(QWheelEvent *event)
 {
     int numDegrees = event->delta() / 8;
     double numSteps = numDegrees / 15.0f;
     zoom(pow(ZoomInFactor, numSteps));
 }
-//! [12]
 
-//! [13]
 void MandelbrotWidget::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)
         lastDragPos = event->pos();
 }
-//! [13]
 
-//! [14]
 void MandelbrotWidget::mouseMoveEvent(QMouseEvent *event)
 {
     if (event->buttons() & Qt::LeftButton) {
@@ -193,9 +180,7 @@ void MandelbrotWidget::mouseMoveEvent(QMouseEvent *event)
         update();
     }
 }
-//! [14]
 
-//! [15]
 void MandelbrotWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
@@ -207,9 +192,7 @@ void MandelbrotWidget::mouseReleaseEvent(QMouseEvent *event)
         scroll(deltaX, deltaY);
     }
 }
-//! [15]
 
-//! [16]
 void MandelbrotWidget::updatePixmap(const QImage &image, double scaleFactor)
 {
     if (!lastDragPos.isNull())
@@ -221,23 +204,20 @@ void MandelbrotWidget::updatePixmap(const QImage &image, double scaleFactor)
     pixmapScale = scaleFactor;
     update();
 }
-//! [16]
 
-//! [17]
 void MandelbrotWidget::zoom(double zoomFactor)
 {
     curScale *= zoomFactor;
     update();
     thread.render(centerX, centerY, curScale, size());
+    __pthread.render(centerX, centerY, curScale, size());
 }
-//! [17]
 
-//! [18]
 void MandelbrotWidget::scroll(int deltaX, int deltaY)
 {
     centerX += deltaX * curScale;
     centerY += deltaY * curScale;
     update();
     thread.render(centerX, centerY, curScale, size());
+    __pthread.render(centerX, centerY, curScale, size());
 }
-//! [18]

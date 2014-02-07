@@ -1,12 +1,15 @@
 HEADERS       = mandelbrotwidget.h \
                 renderthread.h \
     thread.h \
-    computingthread.h
+    computingthread.h \
+    sigslot.h
 SOURCES       = main.cpp \
                 mandelbrotwidget.cpp \
                 renderthread.cpp \
     thread.cpp \
     computingthread.cpp
+
+DEFINES += QT_NO_KEYWORDS
 
 unix:!mac:!symbian:!vxworks:!integrity:LIBS += -lm
 

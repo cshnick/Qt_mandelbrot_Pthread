@@ -44,41 +44,16 @@
 #include <QPixmap>
 #include <QWidget>
 #include "renderthread.h"
+#include "sigslot.h"
+#include "computingthread.h"
 
-#if defined(Q_WS_S60) || defined(Q_WS_MAEMO_5) || defined(Q_WS_SIMULATOR)
-#include <QPushButton>
-
-class ZoomButton : public QPushButton
-{
-    Q_OBJECT
-public:
-    ZoomButton(const QString &text, double zoomFactor, QWidget *parent = NULL)
-        : QPushButton(text, parent), m_ZoomFactor(zoomFactor)
-    {
-        connect(this, SIGNAL(clicked()), this, SLOT(handleClick()));
-    }
-
-signals:
-    void zoom(double zoomFactor);
-
-private slots:
-    void handleClick()
-    {
-        emit zoom(m_ZoomFactor);
-    }
-
-private:
-    const double m_ZoomFactor;
-};
-#endif
-
-//! [0]
-class MandelbrotWidget : public QWidget
+class MandelbrotWidget : public QWidget/*, public sigslot::has_slots<>*/
 {
     Q_OBJECT
 
 public:
     MandelbrotWidget(QWidget *parent = 0);
+    ~MandelbrotWidget();
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -89,7 +64,7 @@ protected:
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
 
-private slots:
+private Q_SLOTS:
     void updatePixmap(const QImage &image, double scaleFactor);
     void zoom(double zoomFactor);
 
@@ -97,6 +72,7 @@ private:
     void scroll(int deltaX, int deltaY);
 
     RenderThread thread;
+    ComputingThread __pthread;
     QPixmap pixmap;
     QPoint pixmapOffset;
     QPoint lastDragPos;
