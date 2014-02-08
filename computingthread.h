@@ -9,23 +9,6 @@
 using namespace sigslot;
 
 class QImage;
-
-
-class MyThread: public pthr::Thread{
-public:
-  // Инициализируем в false флаг завершения в конструкторе
-  MyThread() : __done(false) {}
-  virtual void Execute() {
-    // В процессе работы потока меняем флаг завершения на истину
-    __done = true;
-  }
-  // Функция, возвращающая значение флага завершение
-  bool done() const { return __done; }
-private:
-  bool __done;
-};
-
-
 class ComputingThread : public pthr::Thread
 {
 
@@ -38,7 +21,7 @@ public:
 
     void Execute();
     bool isRunning() {return started;}
-    signal2<const QImage&, double> img;
+    signal2<const QImage&, double> sendImg;
 
 
 private:

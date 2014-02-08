@@ -43,11 +43,10 @@
 
 #include <QPixmap>
 #include <QWidget>
-#include "renderthread.h"
 #include "sigslot.h"
 #include "computingthread.h"
 
-class MandelbrotWidget : public QWidget/*, public sigslot::has_slots<>*/
+class MandelbrotWidget : public QWidget, public sigslot::has_slots<>
 {
     Q_OBJECT
 
@@ -71,7 +70,6 @@ private Q_SLOTS:
 private:
     void scroll(int deltaX, int deltaY);
 
-    RenderThread thread;
     ComputingThread __pthread;
     QPixmap pixmap;
     QPoint pixmapOffset;
@@ -81,6 +79,5 @@ private:
     double pixmapScale;
     double curScale;
 };
-//! [0]
 
 #endif

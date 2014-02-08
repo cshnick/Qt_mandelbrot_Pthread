@@ -1,10 +1,7 @@
 #include "computingthread.h"
 
-#include <QtGui>
-
 #include <math.h>
 #include <QImage>
-
 
 ComputingThread::ComputingThread()
     : started(false)
@@ -23,7 +20,7 @@ ComputingThread::~ComputingThread()
     condition.wakeOne();
     mutex.unlock();
 
-//    wait();
+    Join();
 }
 
 void ComputingThread::render(double centerX, double centerY, double scaleFactor,
@@ -51,8 +48,6 @@ void ComputingThread::Execute()
     started = true;
     mutex.unlock();
     FOREVER {
-        qDebug() << "recalculating";
-
         mutex.lock();
         QSize resultSize = this->resultSize;
         double scaleFactor = this->scaleFactor;
@@ -113,8 +108,9 @@ void ComputingThread::Execute()
             if (allBlack && pass == 0) {
                 pass = 4;
             } else {
-                if (!restart)
-//                    emit renderedImage(image, scaleFactor);
+                if (!restart) {
+                    sendImg(image, scaleFactor);
+                }
                 ++pass;
             }
         }
