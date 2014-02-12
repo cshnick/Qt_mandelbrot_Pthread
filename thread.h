@@ -5,9 +5,6 @@
 
 namespace pthr {
 
-extern "C"
-typedef pthread_t ThreadType;
-
 class Mutex {
     typedef pthread_mutex_t mutex_t;
 
@@ -40,18 +37,20 @@ private:
 class Thread {
 
 public:
-  Thread() {}
-  virtual ~Thread();
-  void Start();
-  virtual void Execute() = 0;
-  void Join();
-  void Kill();
+
+    typedef pthread_t ThreadType;
+    Thread() {}
+    virtual ~Thread();
+    void Start();
+    virtual void Execute() = 0;
+    void Join();
+    void Kill();
 
 private:
-  ThreadType __handle;
+    ThreadType __handle;
 
-  Thread(const Thread&);
-  void operator=(const Thread&);
+    Thread(const Thread&);
+    void operator=(const Thread&);
 };
 
 } // namespace pthr {
