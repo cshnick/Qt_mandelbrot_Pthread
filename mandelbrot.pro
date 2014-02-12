@@ -27,6 +27,7 @@ defineTest(post_copy_files) {
     return(true)
 }
 
+DESTDIR += $$PWD/bin
 
 HEADERS       = mandelbrotwidget.h \
                 thread.h \
@@ -46,7 +47,6 @@ win*{
     post_copy_files($$PWD/Pthreads/pthreadVC2.dll, $$DESTDIR)
 }
 
-DESTDIR += $$PWD/bin
 MOC_DIR += tmps
 OBJECTS_DIR += tmps
 UI_DIR += tmps
